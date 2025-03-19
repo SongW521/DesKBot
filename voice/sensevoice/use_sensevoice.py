@@ -13,7 +13,7 @@ languages = {"auto": 0, "zh": 3, "en": 4, "yue": 7, "ja": 11, "ko": 12, "nospeec
 formatter = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s"
 logging.basicConfig(format=formatter, level=logging.INFO)
 # 指定模型的文件夹路径
-model_folder = os.path.join(os.path.dirname(__file__), "onnx_model")
+model_folder = model_folder = os.path.join(os.path.dirname(__file__),"onnx_model")
 
 def load_model():
     # 检查模型文件夹是否存在
@@ -111,7 +111,7 @@ def real_time_speech_to_text(model):
 def main():
     use_model = load_model()
     # 指定当前文件夹下的音频文件名
-    audio_file = r"D:\audioData\mic_test_11_22\dataset_mictest\angry\angry0_40_mic1.wav" 
+    audio_file = r"C:\Users\song2\Desktop\AIrobot\DeskBot\voice\voice.wav" 
     speech_to_text(audio_file,use_model)
     # real_time_speech_to_text(use_model)
 if __name__ == "__main__":

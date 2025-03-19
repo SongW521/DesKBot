@@ -5,6 +5,7 @@ import numpy as np
 import webrtcvad
 import asyncio
 from sparkai.llm.llm import ChatSparkLLM, ChunkPrintHandler
+from sparkai.core.messages import ChatMessage
 from sensevoice.utils.frontend import WavFrontend
 from sensevoice.use_sensevoice import load_model
 from myTTS import start_TTS
@@ -13,7 +14,7 @@ from myTTS import start_TTS
 logging.basicConfig(level=logging.INFO)
 
 languages = {"auto": 0, "zh": 3, "en": 4, "yue": 7, "ja": 11, "ko": 12, "nospeech": 13}
-model_folder = os.path.join(os.path.dirname(__file__), "sensevoice\\onnx_model")
+model_folder = os.path.join(os.path.dirname(__file__),"sensevoice\\onnx_model")
 
 def load_chat_llm():
     SPARKAI_URL = 'wss://spark-api.xf-yun.com/v3.5/chat'
@@ -53,17 +54,17 @@ async def process_audio(audio_buffer, model, spark_model, systemtip):
         if res_text:
             print(f"识别结果: {res_text}")
 
-            # # 生成用户消息
-            # messages = [ChatMessage(role="system", content=systemtip)
-            #             ,ChatMessage(role="user", content=res_text)]
+            # 生成用户消息
+            messages = [ChatMessage(role="system", content=systemtip)
+                        ,ChatMessage(role="user", content=res_text)]
 
-            # # 向LLM发送消息并获取响应
-            # res = spark_model.generate([messages], callbacks=[ChunkPrintHandler()])
-            # text_output = res.generations[0][0].text
-            # print(text_output)
+            # 向LLM发送消息并获取响应
+            res = spark_model.generate([messages], callbacks=[ChunkPrintHandler()])
+            text_output = res.generations[0][0].text
+            print(text_output)
 
-            # # 语音合成
-            # start_TTS(text_output)
+            # 语音合成
+            start_TTS(text_output)
 
     except Exception as e:
         logging.error("音频识别和处理错误: %s", e)
@@ -121,7 +122,7 @@ async def main():
     spark = load_chat_llm()
     asr = load_model()
     # 启动时发送一次 system 消息
-    systemtip = read_system_tip(r'.\voice\systemTip.txt')
+    systemtip = read_system_tip(r'.\systemTip.txt')
     # 启动实时语音识别
     await real_time_speech_to_text(asr, spark, systemtip)
 

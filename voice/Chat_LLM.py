@@ -1,3 +1,4 @@
+import os
 from sparkai.llm.llm import ChatSparkLLM, ChunkPrintHandler
 from sparkai.core.messages import ChatMessage
 from message_queen import ZMQPublisher
@@ -50,7 +51,13 @@ def sendMessage(publisher:ZMQPublisher, text):
 def main():
     handler = ChunkPrintHandler()
     spark = load_chat_llm()  # 加载模型
-    systemTip = read_system_tip(r'voice\systemTip.txt')  # 从文件中读取系统提示信息
+    # 获取当前脚本所在的目录
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # 拼接 systemTip.txt 的路径
+    file_path = os.path.join(script_dir, "systemTip.txt")
+    print("系统提示文件路径：", file_path)
+    # 读取系统提示信息
+    systemTip = read_system_tip(file_path)
     publisher = ZMQPublisher()
 
     if systemTip is None:
@@ -76,7 +83,6 @@ def main():
 
         res = spark.generate([messages], callbacks=[handler])  # 调用生成函数
         text_output = res.generations[0][0].text  # 获取生成的文本
-
         print("蛋黄：", text_output)
 
         # 发送消息（如果需要的话，调用发送消息函数）
